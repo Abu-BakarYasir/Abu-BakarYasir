@@ -52,17 +52,19 @@ Slack integrations, and the ordinary web work that carries them.
 
 <img src="heading-projects.svg" alt="projects">
 
-[**neuroMedica**](https://github.com/Abu-BakarYasir/neuroMedica) &nbsp;·&nbsp; <samp>typescript</samp>
+[**neuroMedica**](https://github.com/Abu-BakarYasir/neuroMedica) &nbsp;·&nbsp; <samp>typescript</samp><br>
+A medical imaging assistant.
 
-[**job-apply-agent**](https://github.com/Abu-BakarYasir/job-apply-agent) &nbsp;·&nbsp; <samp>python</samp>
-
-[**my_slack_mcp**](https://github.com/Abu-BakarYasir/my_slack_mcp) &nbsp;·&nbsp; <samp>python</samp>
-
-[**Rag_App**](https://github.com/Abu-BakarYasir/Rag_App) &nbsp;·&nbsp; <samp>python</samp>
+[**job-apply-agent**](https://github.com/Abu-BakarYasir/job-apply-agent) &nbsp;·&nbsp; <samp>python</samp><br>
+Applies to jobs automatically.
 
 [**auction_system**](https://github.com/Abu-BakarYasir/auction_system) &nbsp;·&nbsp; <samp>c++</samp><br>
 Console auction system: registration, bidding, and item availability tracked<br>
 against due dates, persisted to text files.
+
+[**my_slack_mcp**](https://github.com/Abu-BakarYasir/my_slack_mcp) &nbsp;·&nbsp; <samp>python</samp>
+
+[**Rag_App**](https://github.com/Abu-BakarYasir/Rag_App) &nbsp;·&nbsp; <samp>python</samp>
 
 <img src="heading-stats.svg" alt="stats">
 
