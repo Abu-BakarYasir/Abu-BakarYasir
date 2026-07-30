@@ -50,16 +50,49 @@ HEADINGS = ["about", "stack", "projects", "stats", "about this page"]
 # dark (#0d1117) GitHub backgrounds, and all hierarchy is expressed with
 # opacity rather than lightness -- opacity degrades symmetrically on both,
 # a lighter grey only works on one.
-# Monochrome on purpose. One ink, hierarchy by opacity only -- an accent hue
-# would have to win on both backgrounds at once, and every value that reads
-# well on #0d1117 is washed out on #ffffff.
-INK = "#768390"      # ~4.0:1 on white, ~4.4:1 on dark
+# Monochrome, but theme-aware rather than a compromise mid-grey.
+#
+# The obvious approach -- one ink that is legible on both #ffffff and #0d1117 --
+# forces every value to a mid-grey, and the result is uniformly dull: the hero
+# number carries no more weight than its own caption.
+#
+# Instead each file ships both palettes and picks at render time with
+# @media (prefers-color-scheme: dark) inside its own <style>. That works even
+# though these load through an <img>: the SVG is an independent document and
+# the preference is a user-level signal available to it. Verified by rendering
+# the same file under a forced dark preference and watching the rule win.
+#
+# One caveat, the same one GitHub's own recommended <picture> approach has:
+# this follows the OS/browser preference, not GitHub's in-page theme setting.
+# GitHub defaults to "sync with system", so the two agree for most people.
+LIGHT = {"v": "#1f2328",   # values, the strongest thing on the card
+         "b": "#424a53",   # body text
+         "m": "#59636e",   # labels
+         "f": "#818b98",   # axis and legend furniture
+         "g": "#d0d7de"}   # rules, bar troughs
+DARK = {"v": "#f0f6fc",
+        "b": "#c9d1d9",
+        "m": "#8b949e",
+        "f": "#6e7681",
+        "g": "#30363d"}
 
-OP_STRONG = "1"
-OP_BODY = "0.78"
-OP_MUTED = "0.55"
-OP_FAINT = "0.30"
-OP_GRID = "0.18"
+
+def theme_css():
+    """Both palettes as classes, dark applied via a preference query.
+
+    Classes rather than fill="var(--x)": var() in a presentation attribute is
+    not reliably supported, whereas a class selector always is.
+    """
+    def block(p):
+        return (f".v{{fill:{p['v']}}}"
+                f".b{{fill:{p['b']}}}"
+                f".m{{fill:{p['m']}}}"
+                f".f{{fill:{p['f']}}}"
+                f".gf{{fill:{p['g']}}}"
+                f".gl{{stroke:{p['g']}}}"
+                f".ln{{stroke:{p['v']}}}"
+                f".ar{{fill:{p['v']}}}")
+    return block(LIGHT) + "@media(prefers-color-scheme:dark){" + block(DARK) + "}"
 
 # --- the year calendar ---------------------------------------------------
 # Four levels, not the portrait's thirteen. A day is one bucket of activity,

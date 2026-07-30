@@ -24,8 +24,8 @@ from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from brand import (  # noqa: E402
-    CHAR_H, CHAR_W, COLS, FONT_SIZE, INK, RAMP, ROW_ASPECT, ROW_DUR,
-    ROW_STAGGER, fmt, font_face, svg_open, write,
+    CHAR_H, CHAR_W, COLS, FONT_SIZE, RAMP, ROW_ASPECT, ROW_DUR,
+    ROW_STAGGER, fmt, font_face, svg_open, theme_css, write,
 )
 
 WORK_W = 1400        # cap for the expensive filters; downscale to grid follows
@@ -203,9 +203,9 @@ def render(rows, cols, static=False):
     out.append(font_face("JBM Ramp", "ramp.woff2"))
     out.append(
         f".r{{font-family:'JBM Ramp',monospace;font-size:{fmt(FONT_SIZE)}px;"
-        f"fill:{INK};white-space:pre}}"
-        f".c{{fill:{INK}}}"
+        f"white-space:pre}}"
     )
+    out.append(theme_css())
     out.append("</style>")
 
     live = []
@@ -239,14 +239,14 @@ def render(rows, cols, static=False):
         # which would slide every glyph after an interior gap out of column.
         clip = "" if static else f' clip-path="url(#c{i})"'
         out.append(
-            f'<text class="r" x="{fmt(x)}" y="{fmt(y)}"'
+            f'<text class="r b" x="{fmt(x)}" y="{fmt(y)}"'
             f'{clip} xml:space="preserve">'
             f"{_esc(text)}</text>"
         )
         if static:
             continue
         out.append(
-            f'<rect class="c" x="{fmt(x)}" y="{fmt(i * CHAR_H + 2)}" '
+            f'<rect class="v" x="{fmt(x)}" y="{fmt(i * CHAR_H + 2)}" '
             f'width="{fmt(CHAR_W)}" height="{fmt(CHAR_H - 4)}" opacity="0">'
             f'<animate attributeName="x" from="{fmt(x)}" to="{fmt(x + run)}" '
             f'begin="{fmt(begin)}s" dur="{fmt(ROW_DUR)}s" fill="freeze"/>'

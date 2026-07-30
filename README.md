@@ -22,6 +22,21 @@
 
 <img src="stats.svg" alt="636 contributions in the last year, with a weekly sparkline">
 
+<!--
+  The links live here in markdown, not inside the SVG above. An <a> inside an
+  SVG that is loaded through an <img> tag is inert -- it renders, but nothing
+  is clickable, because an image document does not get to navigate.
+-->
+<p align="center">
+  <a href="https://abubakar-yasir-portfolio.vercel.app/">abubakar-yasir.vercel.app</a>
+  &nbsp;·&nbsp;
+  <a href="https://www.instagram.com/abubakar._.rao/">instagram</a>
+  &nbsp;·&nbsp;
+  <a href="https://www.linkedin.com/in/abubakar-yasir-web-dev/">linkedin</a>
+  &nbsp;·&nbsp;
+  <a href="mailto:abubakarrao999@gmail.com">email</a>
+</p>
+
 <img src="heading-about.svg" alt="about">
 
 > AI engineer and full-stack developer.<br>

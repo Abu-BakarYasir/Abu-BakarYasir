@@ -29,8 +29,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from brand import (  # noqa: E402
-    INK, OP_BODY, OP_FAINT, OP_GRID, OP_MUTED, OP_STRONG, YEAR_CELL,
-    YEAR_FONT, YEAR_RAMP, YEAR_ROW, esc, fmt, font_face, svg_open, write,
+    YEAR_CELL, YEAR_FONT, YEAR_RAMP, YEAR_ROW, esc, fmt, font_face, svg_open,
+    theme_css, write,
 )
 
 API = "https://api.github.com/graphql"
@@ -222,29 +222,26 @@ def head(title, w, h, weights=(400, 700)):
         out.append(font_face("JBM", "mono400.woff2", 400))
     if 700 in weights:
         out.append(font_face("JBM", "mono700.woff2", 700))
-    out.append(
-        "text{font-family:'JBM',ui-monospace,monospace;"
-        f"fill:{INK};white-space:pre}}"
-    )
+    out.append("text{font-family:'JBM',ui-monospace,monospace;white-space:pre}")
+    out.append(theme_css())
     out.append("</style></defs>")
     return out
 
 
-def tx(x, y, s, size=12, weight=400, op=OP_BODY, fill=None, anchor="start",
-       spacing=None):
+def tx(x, y, s, size=12, weight=400, cls="b", anchor="start", spacing=None):
+    """A text node. cls selects the themed fill: v/b/m/f, strongest first."""
     a = f' text-anchor="{anchor}"' if anchor != "start" else ""
-    f = f' fill="{fill}"' if fill else ""
     ls = f' letter-spacing="{fmt(spacing)}"' if spacing else ""
     wt = f' font-weight="{weight}"' if weight != 400 else ""
     return (
-        f'<text x="{fmt(x)}" y="{fmt(y)}" font-size="{fmt(size)}"{wt}'
-        f' opacity="{op}"{f}{a}{ls}>{esc(s)}</text>'
+        f'<text class="{cls}" x="{fmt(x)}" y="{fmt(y)}" '
+        f'font-size="{fmt(size)}"{wt}{a}{ls}>{esc(s)}</text>'
     )
 
 
-def rule(x1, y, x2, op=OP_GRID):
-    return (f'<line x1="{fmt(x1)}" y1="{fmt(y)}" x2="{fmt(x2)}" y2="{fmt(y)}"'
-            f' stroke="{INK}" stroke-width="1" opacity="{op}"/>')
+def rule(x1, y, x2):
+    return (f'<line class="gl" x1="{fmt(x1)}" y1="{fmt(y)}" x2="{fmt(x2)}" '
+            f'y2="{fmt(y)}" stroke-width="1"/>')
 
 
 def group(n):
@@ -271,14 +268,14 @@ def render_stats(user, cc, repos, days):
 
     out = head("Contribution totals and a weekly sparkline", W, h)
 
-    out.append(tx(PAD, 78, group(total), 58, 700, OP_STRONG))
-    out.append(tx(PAD, 102, "contributions in the last year", 12, 400, OP_MUTED))
+    out.append(tx(PAD, 78, group(total), 58, 700, "v"))
+    out.append(tx(PAD, 102, "contributions in the last year", 12, 400, "m"))
 
     for i, (v, label) in enumerate(((group(active), "active days"),
                                     (group(max(wk)), "best week"))):
         y = 50 + i * 44
-        out.append(tx(W - PAD, y, v, 22, 700, OP_STRONG, anchor="end"))
-        out.append(tx(W - PAD, y + 16, label, 10, 400, OP_MUTED, anchor="end"))
+        out.append(tx(W - PAD, y, v, 22, 700, "v", anchor="end"))
+        out.append(tx(W - PAD, y + 16, label, 10, 400, "m", anchor="end"))
 
     # Weekly aggregates, so a line is defensible: consecutive weeks really are
     # continuous quantities. Daily counts are sparse and discrete -- a line
@@ -296,16 +293,15 @@ def render_stats(user, cc, repos, days):
             + f'L{fmt(pts[-1][0])},{fmt(gy + gh)}Z')
     line = "M" + "L".join(f"{fmt(x)},{fmt(y)}" for x, y in pts)
 
-    out.append(f'<path d="{area}" fill="{INK}" opacity="0.16"/>')
-    out.append(f'<path d="{line}" fill="none" stroke="{INK}" '
-               f'stroke-width="1.5" stroke-linejoin="round" '
-               f'opacity="{OP_BODY}"/>')
+    # Opacity, not a lighter colour, for the area: opacity degrades the same on
+    # both backgrounds, a fixed light grey only works on one.
+    out.append(f'<path class="ar" d="{area}" opacity="0.14"/>')
+    out.append(f'<path class="ln" d="{line}" fill="none" stroke-width="1.4" '
+               f'stroke-linejoin="round"/>')
     # A dot on the final week, so "now" is locatable on a 53-point line.
-    out.append(f'<circle cx="{fmt(pts[-1][0])}" cy="{fmt(pts[-1][1])}" '
-               f'r="2.5" fill="{INK}" opacity="{OP_STRONG}"/>')
-    out.append(f'<line x1="{fmt(gx)}" y1="{fmt(gy + gh)}" x2="{fmt(gx + gw)}" '
-               f'y2="{fmt(gy + gh)}" stroke="{INK}" stroke-width="1" '
-               f'opacity="{OP_GRID}"/>')
+    out.append(f'<circle class="v" cx="{fmt(pts[-1][0])}" '
+               f'cy="{fmt(pts[-1][1])}" r="2.5"/>')
+    out.append(rule(gx, gy + gh, gx + gw))
 
     out.append("</svg>")
     return "".join(out)
@@ -336,12 +332,11 @@ def render_streak(days):
     for i, (v, label, sub) in enumerate(cells):
         x = PAD + i * span
         if i:
-            out.append(f'<line x1="{fmt(x - 30)}" y1="22" x2="{fmt(x - 30)}" '
-                       f'y2="{h - 22}" stroke="{INK}" stroke-width="1" '
-                       f'opacity="{OP_GRID}"/>')
-        out.append(tx(x, 62, v, 42, 700, OP_STRONG))
-        out.append(tx(x, 86, label, 12, 400, OP_BODY))
-        out.append(tx(x, 106, sub, 11, 400, OP_MUTED))
+            out.append(f'<line class="gl" x1="{fmt(x - 30)}" y1="22" '
+                       f'x2="{fmt(x - 30)}" y2="{h - 22}" stroke-width="1"/>')
+        out.append(tx(x, 62, v, 42, 700, "v"))
+        out.append(tx(x, 86, label, 12, 400, "b"))
+        out.append(tx(x, 106, sub, 11, 400, "m"))
 
     out.append("</svg>")
     return "".join(out)
@@ -377,7 +372,7 @@ def render_langs(by_bytes, by_repo, top=5):
         ("BY REPOS", by_repo[:top], "count"),
     )):
         x = PAD + ci * (col_w + gap)
-        out.append(tx(x, 26, title, 10, 400, OP_MUTED, spacing=1.1))
+        out.append(tx(x, 26, title, 10, 400, "m", spacing=1.1))
 
         peak = max((v for _, v in data), default=1) or 1
         grand = sum(v for _, v in data) or 1
@@ -388,19 +383,18 @@ def render_langs(by_bytes, by_repo, top=5):
                 # ASCII full stop, not U+2026: the font subset is basic latin
                 # only, so an ellipsis would render as a missing-glyph box.
                 label = label[:max_chars - 1] + "."
-            out.append(tx(x, y, label, 12, 400, OP_BODY))
+            out.append(tx(x, y, label, 12, 400, "b"))
 
             bx = x + name_w
-            out.append(f'<rect x="{fmt(bx)}" y="{fmt(y - 9)}" '
-                       f'width="{fmt(bar_w)}" height="9" rx="2" '
-                       f'fill="{INK}" opacity="{OP_GRID}"/>')
-            out.append(f'<rect x="{fmt(bx)}" y="{fmt(y - 9)}" '
+            out.append(f'<rect class="gf" x="{fmt(bx)}" y="{fmt(y - 9)}" '
+                       f'width="{fmt(bar_w)}" height="9" rx="2"/>')
+            out.append(f'<rect class="ar" x="{fmt(bx)}" y="{fmt(y - 9)}" '
                        f'width="{fmt(bar_w * (value / peak))}" height="9" '
-                       f'rx="2" fill="{INK}" opacity="0.62"/>')
+                       f'rx="2" opacity="0.72"/>')
 
             shown = (f"{value / grand * 100:.0f}%" if unit == "pct"
                      else str(value))
-            out.append(tx(x + col_w, y, shown, 11, 400, OP_MUTED, anchor="end"))
+            out.append(tx(x + col_w, y, shown, 11, 400, "m", anchor="end"))
 
     out.append("</svg>")
     return "".join(out)
@@ -442,32 +436,32 @@ def render_year(cal):
 
     out = head("The year, one character per day", W, h)
 
-    out.append(tx(left, 26, "THE YEAR", 10, 400, OP_MUTED, spacing=1.1))
+    out.append(tx(left, 26, "THE YEAR", 10, 400, "m", spacing=1.1))
     out.append(tx(left, 46, f"{active} of {len(days)} days had a contribution",
-                  11, 400, OP_BODY))
+                  11, 400, "b"))
 
     # Legend, right-aligned as a block: "less : + # @ more".
     lx = W - PAD - 116
-    out.append(tx(lx, 26, "less", 9, 400, OP_FAINT))
+    out.append(tx(lx, 26, "less", 9, 400, "f"))
     for i, ch in enumerate(YEAR_RAMP[1:]):
-        out.append(f'<text x="{fmt(lx + 30 + i * 14)}" y="26" '
-                   f'font-size="{fmt(YEAR_FONT)}" opacity="{OP_MUTED}" '
+        out.append(f'<text class="m" x="{fmt(lx + 30 + i * 14)}" y="26" '
+                   f'font-size="{fmt(YEAR_FONT)}" '
                    f'xml:space="preserve">{esc(ch)}</text>')
     out.append(tx(lx + 30 + len(YEAR_RAMP[1:]) * 14 + 4, 26, "more",
-                  9, 400, OP_FAINT))
+                  9, 400, "f"))
 
     for wd, label in ((1, "mon"), (3, "wed"), (5, "fri")):
         out.append(tx(left - 10, top + wd * YEAR_ROW + YEAR_FONT * 0.72, label,
-                      9, 400, OP_FAINT, anchor="end"))
+                      9, 400, "f", anchor="end"))
 
     for (wi, wd), (count, _) in sorted(days.items()):
         ch = glyph(count)
         if ch == " ":
             continue                        # a zero day draws nothing at all
         out.append(
-            f'<text x="{fmt(left + wi * YEAR_CELL)}" '
+            f'<text class="b" x="{fmt(left + wi * YEAR_CELL)}" '
             f'y="{fmt(top + wd * YEAR_ROW + YEAR_FONT * 0.72)}" '
-            f'font-size="{fmt(YEAR_FONT)}" opacity="{OP_BODY}" '
+            f'font-size="{fmt(YEAR_FONT)}" '
             f'xml:space="preserve">{esc(ch * 2)}</text>'
         )
 
@@ -481,7 +475,7 @@ def render_year(cal):
         x = left + wi * YEAR_CELL
         if d.month != seen and wi < len(weeks) - 1 and x - last_x >= 34:
             seen, last_x = d.month, x
-            out.append(tx(x, my, d.strftime("%b").lower(), 10, 400, OP_MUTED))
+            out.append(tx(x, my, d.strftime("%b").lower(), 10, 400, "m"))
         elif d.month != seen:
             seen = d.month
 

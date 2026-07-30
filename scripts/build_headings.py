@@ -21,7 +21,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from brand import (  # noqa: E402
-    HEADINGS, INK, OP_BODY, OP_GRID, esc, fmt, font_face, svg_open, write,
+    HEADINGS, esc, fmt, font_face, svg_open, theme_css, write,
 )
 
 W = 860
@@ -48,20 +48,17 @@ def render(word):
     out.append(font_face("JBM Head", "head.woff2"))
     out.append(
         f"text{{font-family:'JBM Head',ui-monospace,monospace;"
-        f"font-size:{fmt(SIZE)}px;fill:{INK};"
+        f"font-size:{fmt(SIZE)}px;"
         f"letter-spacing:{fmt(TRACKING)}px}}"
     )
+    out.append(theme_css())
     out.append("</style></defs>")
-    out.append(
-        f'<text x="0" y="{fmt(BASELINE)}" opacity="{OP_BODY}">'
-        f"{esc(word)}</text>"
-    )
+    out.append(f'<text class="b" x="0" y="{fmt(BASELINE)}">{esc(word)}</text>')
     # Hairline to the right edge. Half-pixel y so it renders as one crisp line
     # rather than a two-pixel smear.
     out.append(
-        f'<line x1="{fmt(rule_x)}" y1="{fmt(BASELINE - 4.5)}" '
-        f'x2="{W}" y2="{fmt(BASELINE - 4.5)}" stroke="{INK}" '
-        f'stroke-width="1" opacity="{OP_GRID}"/>'
+        f'<line class="gl" x1="{fmt(rule_x)}" y1="{fmt(BASELINE - 4.5)}" '
+        f'x2="{W}" y2="{fmt(BASELINE - 4.5)}" stroke-width="1"/>'
     )
     out.append("</svg>")
     return "".join(out)
