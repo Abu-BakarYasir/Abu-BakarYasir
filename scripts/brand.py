@@ -41,7 +41,7 @@ PORTRAIT_DISPLAY_W = 620                 # the <img width> the README uses
 # heading; GitHub strips <style>, class and inline <svg>. The trade is real and
 # worth stating: an <img> heading has no anchor link, so the repository's
 # README outline is empty. The alt text carries the word.
-HEADINGS = ["about", "stack", "projects", "stats", "about this page"]
+HEADINGS = ["about", "stack", "projects", "stats"]
 
 # --- palette -------------------------------------------------------------
 # These SVGs are served through <img>, so they cannot inherit the page colour
