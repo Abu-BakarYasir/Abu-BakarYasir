@@ -513,6 +513,30 @@ def main():
     if not login:
         sys.exit("error: GH_LOGIN is not set")
 
+    # The contribution calendar is viewer-dependent, and not only for the
+    # repository list that privacy:PUBLIC already handles. Measured on this
+    # repository, same pinned window, same code, minutes apart:
+    #
+    #     workflow GITHUB_TOKEN : 41 active days, longest streak 5 (17-21 Jul)
+    #     personal OAuth token  : 39 active days, longest streak 4 (19-22 Jun)
+    #
+    # Reproducible across runs, so it is visibility, not eventual consistency.
+    # Whichever token wrote the files last, the other one reverts them, and the
+    # nightly job then commits a churn diff every single night.
+    #
+    # So the action owns these four files. Running locally is for debugging the
+    # drawing code, not for producing what gets committed.
+    if os.environ.get("GITHUB_ACTIONS") != "true" and "--local" not in sys.argv:
+        sys.exit(
+            "refusing to run outside CI.\n\n"
+            "  These four SVGs are owned by .github/workflows/refresh-stats.yml.\n"
+            "  A personal token sees a different contribution calendar than the\n"
+            "  workflow's token, so regenerating locally and committing the\n"
+            "  result makes the nightly job fight your working copy forever.\n\n"
+            "  To iterate on the drawing code:  python scripts/generate_stats.py --local\n"
+            "  then discard the output:         git checkout -- '*.svg'\n"
+        )
+
     print()
     user, repos = fetch(token, login)
     cc = user["contributionsCollection"]
