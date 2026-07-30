@@ -2,34 +2,51 @@
 <meta charset="utf-8">
 <title>preview</title>
 <style>
-  body { margin: 0; font: 11px ui-monospace, monospace; }
-  section { padding: 20px; }
-  .light { background: #ffffff; color: #57606a; }
-  .dark  { background: #0d1117; color: #8b949e; }
-  h2 { font-size: 10px; letter-spacing: .12em; text-transform: uppercase;
-       opacity: .6; margin: 0 0 10px; font-weight: 400; }
-  img { display: block; margin: 0 0 14px; }
+  body { margin: 0; font: 14px -apple-system, "Segoe UI", sans-serif; }
+  section { padding: 26px 30px; }
+  .light { background: #ffffff; color: #1f2328; }
+  .dark  { background: #0d1117; color: #e6edf3; }
+  .theme { font: 10px ui-monospace, monospace; letter-spacing: .12em;
+           text-transform: uppercase; opacity: .45; margin-bottom: 18px; }
+  img { display: block; max-width: 100%; }
+  .wrap { max-width: 860px; }
+  .center { text-align: center; }
+  .stack { font: 12px ui-monospace, monospace; opacity: .8; }
+  blockquote { margin: 0 0 16px; padding-left: 14px;
+               border-left: 3px solid rgba(128,128,128,.4); opacity: .8; }
+  .gap { height: 18px; }
 </style>
 
-<!-- Loaded through <img> on purpose: that is how GitHub serves these, and it
-     is the only way to test that the inlined @font-face actually applies.
-     An external font URL fails silently here because browsers refuse
-     subresource requests for image documents. -->
+<!-- Every graphic is loaded through <img>, the way GitHub serves it. That is
+     what exercises the inlined @font-face: a system-font fallback with a
+     different advance width would show up here as a sheared character grid. -->
 
 <section class="light">
-  <h2>light &mdash; #ffffff</h2>
-  <img src="../heading-about.svg" width="860" alt="about">
-  <img src="../stats.svg"  width="860" alt="contribution totals">
-  <img src="../streak.svg" width="860" alt="streaks">
-  <img src="../langs.svg"  width="860" alt="languages">
-  <img src="../year.svg"   width="860" alt="the year by day">
+  <div class="theme">light &mdash; #ffffff</div>
+  <div class="wrap">
+    <div class="center"><img src="../portrait.svg" width="620" alt="portrait" style="margin:0 auto"></div>
+    <div class="gap"></div>
+    <img src="../heading-about.svg" alt="about">
+    <blockquote>AI engineer and full-stack developer.<br>Small sharp tools over big vague ideas.</blockquote>
+    <img src="../heading-stack.svg" alt="stack">
+    <p class="stack">python &nbsp; typescript &nbsp; javascript &nbsp; react &nbsp; node &nbsp; fastapi &nbsp; docker &nbsp; git</p>
+    <img src="../heading-stats.svg" alt="stats">
+    <div class="gap"></div>
+    <img src="../stats.svg" alt="totals">
+    <img src="../streak.svg" alt="streaks">
+    <img src="../langs.svg" alt="languages">
+    <img src="../year.svg" alt="the year">
+  </div>
 </section>
 
 <section class="dark">
-  <h2>dark &mdash; #0d1117</h2>
-  <img src="../heading-about.svg" width="860" alt="about">
-  <img src="../stats.svg"  width="860" alt="contribution totals">
-  <img src="../streak.svg" width="860" alt="streaks">
-  <img src="../langs.svg"  width="860" alt="languages">
-  <img src="../year.svg"   width="860" alt="the year by day">
+  <div class="theme">dark &mdash; #0d1117</div>
+  <div class="wrap">
+    <img src="../stats.svg" alt="totals">
+    <img src="../streak.svg" alt="streaks">
+    <img src="../langs.svg" alt="languages">
+    <img src="../year.svg" alt="the year">
+    <img src="../heading-projects.svg" alt="projects">
+    <img src="../heading-about-this-page.svg" alt="about this page">
+  </div>
 </section>

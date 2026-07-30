@@ -22,7 +22,7 @@ assert len(RAMP) == 13
 # is what these numbers assume. Verified with fontTools; see build_fonts.py.
 # Substituting a font with a different advance (Consolas is ~0.55) shrinks the
 # portrait horizontally, which is why the font is embedded rather than named.
-COLS = 90
+COLS = 110
 FONT_SIZE = 12.9
 ADVANCE_EM = 0.600
 CHAR_W = FONT_SIZE * ADVANCE_EM          # 7.74
@@ -34,14 +34,14 @@ CHAR_H = CHAR_W / ROW_ASPECT             # 16.125, i.e. line-height 1.25
 ROW_STAGGER = 0.09
 ROW_DUR = 0.15
 
-PORTRAIT_DISPLAY_W = 460                 # the <img width> the README uses
+PORTRAIT_DISPLAY_W = 620                 # the <img width> the README uses
 
 # --- README section headings ---------------------------------------------
 # Rendered as SVG because that is the only way to put a chosen typeface on a
 # heading; GitHub strips <style>, class and inline <svg>. The trade is real and
 # worth stating: an <img> heading has no anchor link, so the repository's
 # README outline is empty. The alt text carries the word.
-HEADINGS = ["about", "stack", "selected work", "activity", "elsewhere"]
+HEADINGS = ["about", "stack", "projects", "stats", "about this page"]
 
 # --- palette -------------------------------------------------------------
 # These SVGs are served through <img>, so they cannot inherit the page colour
@@ -50,14 +50,29 @@ HEADINGS = ["about", "stack", "selected work", "activity", "elsewhere"]
 # dark (#0d1117) GitHub backgrounds, and all hierarchy is expressed with
 # opacity rather than lightness -- opacity degrades symmetrically on both,
 # a lighter grey only works on one.
+# Monochrome on purpose. One ink, hierarchy by opacity only -- an accent hue
+# would have to win on both backgrounds at once, and every value that reads
+# well on #0d1117 is washed out on #ffffff.
 INK = "#768390"      # ~4.0:1 on white, ~4.4:1 on dark
-ACCENT = "#2f81f7"   # ~3.7:1 on white, ~4.3:1 on dark
 
 OP_STRONG = "1"
 OP_BODY = "0.78"
 OP_MUTED = "0.55"
 OP_FAINT = "0.30"
 OP_GRID = "0.18"
+
+# --- the year calendar ---------------------------------------------------
+# Four levels, not the portrait's thirteen. A day is one bucket of activity,
+# not a brightness; thirteen shades of "some commits" is false precision, and
+# at calendar size the middle ten are indistinguishable anyway.
+YEAR_RAMP = " :+#@"
+
+# Each day is drawn as the glyph TWICE. One character per day makes a 53-week
+# year only ~400px wide, which looks cramped beside a full-width card; doubling
+# the glyph fills the measure without inflating the font size.
+YEAR_FONT = 12.5
+YEAR_CELL = YEAR_FONT * ADVANCE_EM * 2      # 15.0
+YEAR_ROW = 15.0                             # near-square cells
 
 
 def esc(text):
