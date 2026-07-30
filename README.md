@@ -74,3 +74,4 @@ Typeface <a href="https://www.jetbrains.com/lp/mono/">JetBrains Mono</a>,
 subset and inlined, <a href="assets/fonts/OFL.txt">SIL OFL 1.1</a>.
 Stats refreshed nightly by <a href=".github/workflows/refresh-stats.yml">a
 scheduled action</a>; all the code is in <a href="scripts">scripts/</a>.</sub>
+
