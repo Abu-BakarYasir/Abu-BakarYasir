@@ -1,0 +1,11 @@
+# Force LF everywhere. This is not cosmetic: the generated SVGs are written by
+# Python (LF) both on a Windows workstation and on the Linux runner. With
+# core.autocrlf=true the Windows checkout would be CRLF, so regenerating
+# locally would show every file as modified and the nightly job would fight
+# the working copy forever.
+* text=auto eol=lf
+
+*.woff2 binary
+*.ttf   binary
+*.png   binary
+*.jpg   binary

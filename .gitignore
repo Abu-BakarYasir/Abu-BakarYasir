@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+
+# Optional debug dump from generate_portrait.py --txt
+portrait.txt
+
+# Source TTFs are not vendored; only the subset woff2 files are committed.
+# See scripts/build_fonts.py for where to point --src.
+*.ttf

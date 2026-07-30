@@ -1,0 +1,48 @@
+name: refresh stats
+
+on:
+  schedule:
+    # 05:17 UTC. An offset minute rather than :00 -- GitHub queues a very large
+    # number of cron jobs on the hour and delays them.
+    - cron: "17 5 * * *"
+  workflow_dispatch:
+  # Deliberately no `push` trigger. This job commits to the repository, and a
+  # push trigger would fire it again on its own commit.
+
+permissions:
+  contents: write
+
+concurrency:
+  # A scheduled run and a manual dispatch overlapping would race to push.
+  group: refresh-stats
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # No setup-python step: the generator imports only the standard library,
+      # so the runner's preinstalled python3 is enough and there is no
+      # dependency resolution that can break the nightly run.
+      - name: generate
+        env:
+          # The built-in token is enough -- it returns the same numbers a
+          # personal access token would, and it is scoped to this repository.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_LOGIN: ${{ github.repository_owner }}
+        run: python3 scripts/generate_stats.py
+
+      - name: commit if changed
+        run: |
+          FILES="stats.svg streak.svg langs.svg year.svg"
+          if [ -z "$(git status --porcelain -- $FILES)" ]; then
+            echo "no change; nothing to commit"
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- $FILES
+          git commit -m "stats: refresh"
+          git push
