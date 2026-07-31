@@ -22,7 +22,12 @@ assert len(RAMP) == 13
 # is what these numbers assume. Verified with fontTools; see build_fonts.py.
 # Substituting a font with a different advance (Consolas is ~0.55) shrinks the
 # portrait horizontally, which is why the font is embedded rather than named.
-COLS = 110
+# 90 columns displayed at 460px. Shrinking the portrait by lowering the <img>
+# width alone does not work: at 460px a 110-column grid puts each character at
+# 4.2px and the face turns to texture. Fewer, larger characters resolve better
+# than more, smaller ones, so the column count comes down with the display
+# width. Below about 76 the face goes blocky.
+COLS = 90
 FONT_SIZE = 12.9
 ADVANCE_EM = 0.600
 CHAR_W = FONT_SIZE * ADVANCE_EM          # 7.74
@@ -34,7 +39,7 @@ CHAR_H = CHAR_W / ROW_ASPECT             # 16.125, i.e. line-height 1.25
 ROW_STAGGER = 0.09
 ROW_DUR = 0.15
 
-PORTRAIT_DISPLAY_W = 620                 # the <img width> the README uses
+PORTRAIT_DISPLAY_W = 460                 # the <img width> the README uses
 
 # --- README section headings ---------------------------------------------
 # Rendered as SVG because that is the only way to put a chosen typeface on a

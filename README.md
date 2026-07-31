@@ -16,7 +16,7 @@
 -->
 
 <p align="center">
-  <img src="portrait.svg" width="620"
+  <img src="portrait.svg" width="460"
        alt="ASCII self-portrait, drawn one line at a time">
 </p>
 
